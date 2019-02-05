@@ -12,16 +12,15 @@ def crypt_file(filename, key, mode):
     if mode == 'd':
         extension = (source.readline().rstrip()).decode()
     else:
-        extension = ".xor"
+        extension = "xor"
     (name, ext) = os.path.split(filename)[1].split(".")
-    target = open(name + '.' + extension, "wb")
+    target = open(os.path.join(path, name + "." + extension), "wb")
     if mode == 'e':
         ext = ext + "\n"
         target.write(ext.encode())
     data = source.read(len(key))
     while data:
         encrypted = (int.from_bytes(data,"big") ^ int.from_bytes(key.encode(),"big")).to_bytes(len(data), "big")
-        #encrypted = ''.join([chr(ord(a)^ord(b)) for a,b in zip(data, key)])
         target.write(encrypted)
         data = source.read(len(key))
     if mode == 'e':
@@ -51,16 +50,13 @@ source = input("Please enter the name of the file or folder to encrypt\n")
 while not os.path.exists(source):
     source = input("File or folder not found. Please try again\n")
 if os.path.isfile(source):
-    crypt_file(source, key, mode)
+    p = os.path.join(path, source)
+    crypt_file(p, key, mode)
 elif os.path.isdir(source):
+    path = os.path.join(path, source)
     for file in os.listdir(source):
-        crypt_file(file, key, + mode)
-
-    source = input("Please enter the name of the file or folder to encrypt\n")
-    while not os.path.exists(source):
-        source = input("File or folder not found. Please try again\n")
-    if os.path.isfile(source):
-        crypt_file(source, key,'.d')
-    elif os.path.isdir(source):
-        for file in os.listdir(source):
-            crypt_file(file, key,'.d')
+        if file.endswith(".xor") and mode == 'd' or not file.endswith(".xor") and mode == 'e':
+            p = os.path.join(path, file)
+            crypt_file(p, key, mode)
+clear()
+exit()
