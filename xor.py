@@ -1,6 +1,7 @@
 import random
 import os
 import string
+import time
 
 path = os.path.dirname(os.path.abspath(__file__))
 
@@ -58,5 +59,7 @@ elif os.path.isdir(source):
         if file.endswith(".xor") and mode == 'd' or not file.endswith(".xor") and mode == 'e':
             p = os.path.join(path, file)
             crypt_file(p, key, mode)
+print("Exiting...")
+time.sleep(1)
 clear()
 exit()
