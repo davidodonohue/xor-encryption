@@ -30,6 +30,7 @@ def crypt_file(filename, key, mode):
         print("Decrypted file: " + filename)
     source.close()
     target.close()
+    os.remove(filename)
 
 clear()
 mode = input("Press e to encrypt and d to decrypt\n")
