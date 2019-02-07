@@ -25,7 +25,8 @@ def crypt_file(filename, key, mode):
         extension = crypt_block(extension,k).decode()
     else:
         extension = "xor"
-    (name, ext) = os.path.split(filename)[1].rsplit(".",1)
+    (path,file) = os.path.split(filename)
+    (name, ext) = file.rsplit(".",1)
     target = open(os.path.join(path, name + "." + extension), "wb")
     if mode == 'e':
         k = key * (1+(len(extension)//len(key)))
@@ -44,6 +45,15 @@ def crypt_file(filename, key, mode):
     source.close()
     target.close()
     os.remove(filename)
+
+def crypt_folder(p,key,mode):
+    for f in os.listdir(p):
+        f = os.path.join(p,f)
+        if os.path.isfile(f):
+            crypt_file(f,key,mode)
+        else:
+            crypt_folder(f,key,mode)
+
 
 clear()
 mode = input("Press e to encrypt and d to decrypt\n")
@@ -78,10 +88,7 @@ if os.path.isfile(source):
     crypt_file(p, key, mode)
 elif os.path.isdir(source):
     path = os.path.join(path, source)
-    for file in os.listdir(source):
-        if file.endswith(".xor") and mode == 'd' or not file.endswith(".xor") and mode == 'e':
-            p = os.path.join(path, file)
-            crypt_file(p, key, mode)
+    crypt_folder(path,key,mode)
 print("Exiting...")
 time.sleep(1)
 clear()
