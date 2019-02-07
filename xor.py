@@ -20,14 +20,18 @@ def crypt_file(filename, key, mode):
     source = open(filename, "rb")
     print ("Working on " + filename + "...")
     if mode == 'd':
-        extension = (source.readline().rstrip()).decode()
+        extension = (source.readline().rstrip())
+        k = key * (1+(len(extension)//len(key)))
+        extension = crypt_block(extension,k).decode()
     else:
         extension = "xor"
     (name, ext) = os.path.split(filename)[1].rsplit(".",1)
     target = open(os.path.join(path, name + "." + extension), "wb")
     if mode == 'e':
-        ext = ext + "\n"
-        target.write(ext.encode())
+        k = key * (1+(len(extension)//len(key)))
+        ext = crypt_block(ext.encode(),k)
+        target.write(ext)
+        target.write(b"\n")
     data = source.read(len(key))
     while data:
         encrypted = crypt_block(data,key)
